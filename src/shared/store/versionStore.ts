@@ -2,13 +2,19 @@ import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
 
-interface VersionUpdate {
+export interface VersionLink {
+  label: string
+  href: string
+}
+
+export interface VersionUpdate {
   version: string
   title: string
   date: string
   features: string[]
   fixes?: string[]
   breaking?: string[]
+  links?: VersionLink[]
 }
 
 interface VersionState {
@@ -51,6 +57,29 @@ const formatDate = (dateStr: string) => {
 // 版本更新历史
 const VERSION_UPDATES: VersionUpdate[] = [
   {
+    version: '2.0.5',
+    title: '部署配置与初始化体验修复',
+    date: formatDate('2026-08-14'),
+    features: [
+      'Docker 预构建镜像支持在容器启动时读取全部 OKI_* 环境变量，无需为配置重新构建镜像。',
+      '统一各部署方式的环境变量配置入口，并补充 Docker、Vercel、Cloudflare Pages、Netlify 与本地开发文档。',
+    ],
+    fixes: ['修复 OKI_INITIAL_CONFIG 中 Token、远程视频源、订阅和广告过滤等配置未完整生效的问题。'],
+    breaking: [
+      'Docker Compose 用户需将 OKI_* 从 build.args 迁移到 environment；Vercel、Cloudflare Pages 和 Netlify 无需调整。',
+    ],
+    links: [
+      {
+        label: '查看部署指南',
+        href: 'https://github.com/Ouonnki/OuonnkiTV/blob/main/docs/deployment.md',
+      },
+      {
+        label: '查看配置说明',
+        href: 'https://github.com/Ouonnki/OuonnkiTV/blob/main/docs/configuration.md',
+      },
+    ],
+  },
+  {
     version: '2.0.4',
     title: '播放页右侧面板滚动体验优化',
     date: formatDate('2026-03-19'),
@@ -58,9 +87,7 @@ const VERSION_UPDATES: VersionUpdate[] = [
       '播放页「换源」区域改为使用 shadcn/ui 的 ScrollArea 包裹，资源数量较多时支持区域内滚动。',
       '优化大屏下换源面板的高度分配策略，展开后内容区域可占满可用高度，减少底部空白。',
     ],
-    fixes: [
-      '修复换源列表在容器仍有剩余空间时提前滚动、导致下方留白过多的显示问题。',
-    ],
+    fixes: ['修复换源列表在容器仍有剩余空间时提前滚动、导致下方留白过多的显示问题。'],
     breaking: [],
   },
   {
@@ -72,9 +99,7 @@ const VERSION_UPDATES: VersionUpdate[] = [
       '播放器按全屏状态与用户配置动态切换迷你进度条显示，避免遮挡画面',
       '个人配置导入与环境配置新增 isFullscreenProgressHidden 字段支持',
     ],
-    fixes: [
-      '补充设置迁移与测试覆盖，确保旧配置升级后自动补齐默认值',
-    ],
+    fixes: ['补充设置迁移与测试覆盖，确保旧配置升级后自动补齐默认值'],
     breaking: [],
   },
   {
@@ -236,7 +261,7 @@ const VERSION_UPDATES: VersionUpdate[] = [
     ],
     fixes: ['优化了视频源管理功能', '优化视频搜索逻辑，增快搜索速度'],
     breaking: [
-      '旧版域名https://tv.new.ouonnki.site即将失效,请尽快使用新版域名访问https://tv.ouonnki.site',
+      '旧版域名https://tv.new.ouonnki.com即将失效,请尽快使用新版域名访问https://tv.ouonnki.com',
     ],
   },
   {
